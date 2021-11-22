@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="myjob" class="com.zuanshi.job.Myjob"></bean>
+
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="myjob"></property>
+        <property name="targetMethod" value="abc"></property>
+        <!-- 并发 concurrent
+            false: 单线程
+            true: 在规定的周期内任务没完成时，又触发新的任务，属于同一任务时。使用多线程来处理任务-->
+        <property name="concurrent" value="true"/>
+    </bean>
+    <!--  触发器  -->
+    <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!--  七子表达式： 秒 分 时 日 月 周 年（省略）     -->
+        <property name="cronExpression" value="0/2 * * * * ?"/>
+        <property name="jobDetail" ref="jobDetail"/>
+    </bean>
+
+    <!--  调度容器  -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="trigger"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
